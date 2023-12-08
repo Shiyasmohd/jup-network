@@ -16,6 +16,7 @@ contract NetState {
     struct Judge {
         uint256 judgeId;
         string name;
+        string bio;
         string licenseId;
         bool isVerified;
         string[] tags;
@@ -25,17 +26,16 @@ contract NetState {
     struct Dispute {
         uint256 disputeId;
         address party1;
+        string party1name;
         string summary;
-        string facts;
-        string[] evidences;
-        string typeOfDispute;
+        string tag;
+        string evidenceDoc;
         address party2;
-        string replyFacts;
-        string[] replyEvidences;
+        string party2name;
+        string replyEvidenceDoc;
         DisputeStatus status;
         uint256 judgeId;
         string decisionByJudge;
-        string reasonsForDecision;
     }
 
     mapping(uint256 => Dispute) public disputes;
@@ -68,6 +68,7 @@ contract NetState {
     event JudgeVerified(uint256 indexed judgeId);
     event JudgeLevelUpdated(uint256 indexed judgeId, uint256 newLevel);
     event JudgeAssigned(uint256 indexed disputeId, uint256 indexed judgeId);
+    event DecisionMade(uint256 indexed disputeId, string decision);
 
     constructor() {
         admin = msg.sender;
@@ -75,6 +76,7 @@ contract NetState {
 
     function registerJudge(
         string memory _name,
+        string memory _bio,
         string memory _licenseId,
         string[] memory _tags
     ) external {
@@ -82,6 +84,7 @@ contract NetState {
         judges[judgeCounter] = Judge({
             judgeId: judgeCounter,
             name: _name,
+            bio: _bio,
             licenseId: _licenseId,
             isVerified: false,
             tags: _tags,
@@ -143,44 +146,84 @@ contract NetState {
         return result;
     }
 
+    function getJudgesByTags(string[] memory _tags)
+        external
+        view
+        returns (Judge[] memory)
+    {
+        uint256 count;
+        Judge[] memory result = new Judge[](judgeCounter);
+
+        for (uint256 i = 1; i <= judgeCounter; i++) {
+            if (hasCommonTag(judges[i].tags, _tags)) {
+                result[count] = judges[i];
+                count++;
+            }
+        }
+        return result;
+    }
+
+    function hasCommonTag(string[] memory _tagsA, string[] memory _tagsB)
+        internal
+        pure
+        returns (bool)
+    {
+        for (uint256 i = 0; i < _tagsA.length; i++) {
+            for (uint256 j = 0; j < _tagsB.length; j++) {
+                if (
+                    keccak256(abi.encodePacked(_tagsA[i])) ==
+                    keccak256(abi.encodePacked(_tagsB[j]))
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function getAllJudges() external view returns (Judge[] memory) {
+        Judge[] memory allJudges = new Judge[](judgeCounter);
+        for (uint256 i = 1; i <= judgeCounter; i++) {
+            allJudges[i - 1] = judges[i];
+        }
+        return allJudges;
+    }
+
     function initiateDispute(
+        string memory _party1name,
         string memory _summary,
-        string memory _facts,
-        string[] memory _evidences,
-        string memory typeOfDispute,
-        address _party2
+        string memory _tag,
+        string memory _evidenceDoc,
+        address _party2,
+        string memory _party2name
     ) external {
         disputeCounter++;
         disputes[disputeCounter] = Dispute({
             disputeId: disputeCounter,
             party1: msg.sender,
+            party1name: _party1name,
             summary: _summary,
-            facts: _facts,
-            evidences: _evidences,
-            typeOfDispute: typeOfDispute,
+            tag: _tag,
+            evidenceDoc: _evidenceDoc,
             party2: _party2,
-            replyFacts: "",
-            replyEvidences: new string[](0),
+            party2name: _party2name,
+            replyEvidenceDoc: "",
             status: DisputeStatus.Initiated,
             judgeId: 0,
-            decisionByJudge: "",
-            reasonsForDecision: ""
+            decisionByJudge: ""
         });
 
         emit DisputeInitiated(disputeCounter, msg.sender, _party2);
     }
 
-    function replyToDispute(
-        uint256 _disputeId,
-        string memory _replyFacts,
-        string[] memory _replyEvidences
-    ) external {
+    function replyToDispute(uint256 _disputeId, string memory _replyEvidenceDoc)
+        external
+    {
         require(
             disputes[_disputeId].status == DisputeStatus.Initiated,
             "Dispute is not in the correct status"
         );
-        disputes[_disputeId].replyFacts = _replyFacts;
-        disputes[_disputeId].replyEvidences = _replyEvidences;
+        disputes[_disputeId].replyEvidenceDoc = _replyEvidenceDoc;
         disputes[_disputeId].status = DisputeStatus.Reply;
     }
 
@@ -208,29 +251,13 @@ contract NetState {
         return allDisputes;
     }
 
-    function getAllJudges() external view returns (Judge[] memory) {
-        Judge[] memory allJudges = new Judge[](judgeCounter);
-        for (uint256 i = 1; i <= judgeCounter; i++) {
-            allJudges[i - 1] = judges[i];
-        }
-        return allJudges;
-    }
-
-    function getJudgesByTags(string[] memory _tags)
+    function getDetailsOfDispute(uint256 _disputeId)
         external
         view
-        returns (Judge[] memory)
+        returns (Dispute memory)
     {
-        uint256 count;
-        Judge[] memory result = new Judge[](judgeCounter);
-
-        for (uint256 i = 1; i <= judgeCounter; i++) {
-            if (hasCommonTag(judges[i].tags, _tags)) {
-                result[count] = judges[i];
-                count++;
-            }
-        }
-        return result;
+        require(_disputeId <= disputeCounter, "Invalid dispute ID");
+        return disputes[_disputeId];
     }
 
     function getDisputesByParty(address _party)
@@ -250,15 +277,6 @@ contract NetState {
         return result;
     }
 
-    function getDetailsOfDispute(uint256 _disputeId)
-        external
-        view
-        returns (Dispute memory)
-    {
-        require(_disputeId <= disputeCounter, "Invalid dispute ID");
-        return disputes[_disputeId];
-    }
-
     function getDisputesOfAJudge(uint256 _judgeId)
         external
         view
@@ -276,22 +294,33 @@ contract NetState {
         return result;
     }
 
-    function hasCommonTag(string[] memory _tagsA, string[] memory _tagsB)
-        internal
-        pure
-        returns (bool)
+    function getDisputesByTag(string memory _tag)
+        external
+        view
+        returns (Dispute[] memory)
     {
-        for (uint256 i = 0; i < _tagsA.length; i++) {
-            for (uint256 j = 0; j < _tagsB.length; j++) {
-                if (
-                    keccak256(abi.encodePacked(_tagsA[i])) ==
-                    keccak256(abi.encodePacked(_tagsB[j]))
-                ) {
-                    return true;
-                }
+        uint256 count;
+        Dispute[] memory result = new Dispute[](disputeCounter);
+
+        for (uint256 i = 1; i <= disputeCounter; i++) {
+            if (keccak256(abi.encodePacked(disputes[i].tag)) == keccak256(abi.encodePacked(_tag))) {
+                result[count] = disputes[i];
+                count++;
             }
         }
-        return false;
+        return result;
     }
 
+      function makeDecision(uint256 _disputeId, string memory _decision)
+        external
+        onlyJudge(_disputeId, disputes[_disputeId].judgeId)
+    {
+        require(disputes[_disputeId].status == DisputeStatus.Hearing, "Dispute not in the correct status");
+
+        disputes[_disputeId].status = DisputeStatus.Decision;
+        disputes[_disputeId].decisionByJudge = _decision;
+
+
+       emit DecisionMade(_disputeId, _decision);
+    }
 }
