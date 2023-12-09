@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -15,17 +15,33 @@ import {
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { ABI, CONTRACT_ADDRESS } from '@/lib/const';
+import {
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuItemOption,
+    MenuGroup,
+    MenuOptionGroup,
+    MenuDivider,
+} from '@chakra-ui/react'
+import { ChevronDownIcon } from '@chakra-ui/icons'
+import { createNode, sendDispute } from '@/lib/waku';
+import { LightNode } from '@waku/sdk';
 
 export default function SettleDispute() {
     const [party1name, setParty1Name] = useState('');
     const [summary, setSummary] = useState('');
     const [tag, setTag] = useState('');
-    const [evidenceDoc, setEvidenceDoc] = useState('');
+    const [evidenceDoc, setEvidenceDoc] = useState<any>();
     const [party2, setParty2] = useState('');
     const [party2name, setParty2Name] = useState('');
     const toast = useToast();
+    const [wakuNode, setWakuNode] = useState<LightNode | null>(null);
 
-    const handleFormSubmit = async (e) => {
+    const tags = ["Maritime", "E-commerce", "Others"]
+
+    const handleFormSubmit = async (e: any) => {
         e.preventDefault();
         // console.log("party1name :", party1name);
         try {
@@ -44,7 +60,7 @@ export default function SettleDispute() {
     };
 
     const subscribeChannel = async () => {
-       
+
         //@ts-ignore
         const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider)
 
@@ -53,29 +69,58 @@ export default function SettleDispute() {
 
         //@ts-ignore
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-        // Get the signer from the provider
         const signer = provider.getSigner();
-        // Create a transaction object for the mint function
-        // console.log(Number(props.subscriptionAmount).toString())
-        // console.log(ethers.utils.parseEther(Number(props.subscriptionAmount).toString()))
-        //{ value: (Number(props.subscriptionAmount) + 100000000000000).toString() }
-        await contract.connect(signer).initiateDispute(party1name, summary, tag, evidenceDoc, party2, party2name,).then(async (res: any) => {
+        console.log(party1name, summary, tag, evidenceDoc, party2, party2name)
+        await contract.connect(signer).initiateDispute(party1name, summary, tag, "evidenceDoc", party2, party2name,).then(async (res: any) => {
             toast({
-                title: 'Submitting the form',
+                title: 'Initiating Dispute',
                 status: 'loading',
                 duration: 2000,
                 isClosable: false,
             })
             await res.wait();
             toast({
-                title: "Dispute settled",
+                title: "Dispute Initiated",
                 status: 'success',
                 duration: 2000,
                 isClosable: false,
             })
-    });
-}
+            if (wakuNode == null) {
+                toast({
+                    title: 'Waku Node Not Started',
+                    status: 'error',
+                    duration: 2000,
+                    isClosable: false,
+                })
+                return
+            }
+            await sendDispute(
+                wakuNode,
+                {
+                    party1name,
+                    evidenceDoc,
+                    party2addr: party2,
+                    party2name,
+                    summary,
+                    tag
+                },
+                party2
+            )
+        });
+    }
+
+
+
+    useEffect(() => {
+        if (wakuNode) return;
+
+        (async () => {
+            console.log("starting node");
+            const node = await createNode();
+            console.log("node started");
+            setWakuNode(node);
+        })();
+    }, [wakuNode]);
 
 
     return (
@@ -85,7 +130,7 @@ export default function SettleDispute() {
         <Flex justifyContent="center">
 
 
-            <Box p={5} shadow="md" borderWidth="1px" borderRadius="md" width="600px" bg="rgba(255, 255, 255, 0.5)">
+            <Box p={5} shadow="md" borderWidth="1px" borderRadius="md" width="600px" bg="rgba(255, 255, 255)">
                 <form onSubmit={handleFormSubmit}>
                     <Stack spacing={3}>
                         <FormControl >
@@ -94,7 +139,7 @@ export default function SettleDispute() {
                                 bg="white"
                                 type="text"
                                 value={party1name}
-                                onChange={(e:any) => setParty1Name(e.target.value)}
+                                onChange={(e: any) => setParty1Name(e.target.value)}
                             />
                         </FormControl>
 
@@ -102,47 +147,46 @@ export default function SettleDispute() {
                             <FormLabel>Summary</FormLabel>
                             <Textarea
                                 rows={4}
-                                type="text"
                                 resize="vertical"
                                 value={summary}
                                 placeholder="Enter summary here..."
-                                onChange={(e:any) => setSummary(e.target.value)}
+                                onChange={(e: any) => setSummary(e.target.value)}
                             />
                         </FormControl>
 
                         <FormControl>
                             <FormLabel>Tag</FormLabel>
-                            <Input
-                                type="text"
-                                value={tag}
-                                onChange={(e:any) => setTag(e.target.value)}
-                            />
+                            <Menu  >
+                                <MenuButton as={Button} rightIcon={<ChevronDownIcon />} className='bg-[#edf2f6]'>
+                                    {tag.length == 0 ? "Select" : tag}
+                                </MenuButton>
+                                <MenuList>
+                                    {
+                                        tags.map((item, index) => (
+                                            <MenuItem key={index} onClick={() => setTag(item)}>
+                                                {item}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </MenuList>
+                            </Menu>
                         </FormControl>
 
                         <FormControl>
                             <FormLabel>Evidence Document</FormLabel>
-                            <Input
-                                type="text"
-                                value={evidenceDoc}
-                                onChange={(e:any) => setEvidenceDoc(e.target.value)}
-                            />
+                            <div className="upload-btn-wrapper mt-4 cursor-pointer">
+                                <Button className="btn">{evidenceDoc != null ? "evidenceDoc[0].name" : "Upload Document"}</Button>
+                                <Input type="file" name="myfile" onChange={(e) => setEvidenceDoc(e.target.files)} />
+                            </div>
                         </FormControl>
 
                         <FormControl>
-                            <FormLabel>Address of Party 2</FormLabel>
+                            <FormLabel>Opposite Party 1 Wallet</FormLabel>
                             <Input
                                 type="text"
                                 value={party2}
-                                onChange={(e:any) => setParty2(e.target.value)}
-                            />
-                        </FormControl>
-
-                        <FormControl>
-                            <FormLabel>Party 2 Name</FormLabel>
-                            <Input
-                                type="text"
-                                value={party2name}
-                                onChange={(e:any) => setParty2Name(e.target.value)}
+                                onChange={(e: any) => setParty2(e.target.value)}
+                                placeholder='0x06C41df2358deD2Fd891522f9Da75eca2150c10B'
                             />
                         </FormControl>
 
