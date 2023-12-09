@@ -8,6 +8,7 @@ const nextConfig = {
   env: {
     PROJECT_ID: process.env.PROJECT_ID,
     HUDDLE_PROJECT_ID: process.env.HUDDLE_PROJECT_ID,
+    LIGHTHOUSE_APIKEY:process.env.LIGHTHOUSE_APIKEY
   }
 }
 
