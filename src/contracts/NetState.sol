@@ -15,7 +15,6 @@ contract NetState {
 
     struct Judge {
         uint256 judgeId;
-        string name;
         string bio;
         string licenseId;
         bool isVerified;
@@ -26,12 +25,10 @@ contract NetState {
     struct Dispute {
         uint256 disputeId;
         address party1;
-        string party1name;
         string summary;
         string tag;
         string evidenceDoc;
         address party2;
-        string party2name;
         string replyEvidenceDoc;
         DisputeStatus status;
         uint256 judgeId;
@@ -60,11 +57,7 @@ contract NetState {
         address indexed party1,
         address indexed party2
     );
-    event JudgeRegistered(
-        uint256 indexed judgeId,
-        string name,
-        string licenseId
-    );
+    event JudgeRegistered(uint256 indexed judgeId, string licenseId);
     event JudgeVerified(uint256 indexed judgeId);
     event JudgeLevelUpdated(uint256 indexed judgeId, uint256 newLevel);
     event JudgeAssigned(uint256 indexed disputeId, uint256 indexed judgeId);
@@ -75,7 +68,6 @@ contract NetState {
     }
 
     function registerJudge(
-        string memory _name,
         string memory _bio,
         string memory _licenseId,
         string[] memory _tags
@@ -83,7 +75,6 @@ contract NetState {
         judgeCounter++;
         judges[judgeCounter] = Judge({
             judgeId: judgeCounter,
-            name: _name,
             bio: _bio,
             licenseId: _licenseId,
             isVerified: false,
@@ -91,7 +82,7 @@ contract NetState {
             level: 0
         });
 
-        emit JudgeRegistered(judgeCounter, _name, _licenseId);
+        emit JudgeRegistered(judgeCounter, _licenseId);
     }
 
     function verifyJudge(uint256 _judgeId) external onlyAdmin {
@@ -188,25 +179,22 @@ contract NetState {
         }
         return allJudges;
     }
-//fn for SettleDispute
+
+    //fn for SettleDispute
     function initiateDispute(
-        string memory _party1name,
         string memory _summary,
         string memory _tag,
         string memory _evidenceDoc,
-        address _party2,
-        string memory _party2name
+        address _party2
     ) external {
         disputeCounter++;
         disputes[disputeCounter] = Dispute({
             disputeId: disputeCounter,
             party1: msg.sender,
-            party1name: _party1name,
             summary: _summary,
             tag: _tag,
             evidenceDoc: _evidenceDoc,
             party2: _party2,
-            party2name: _party2name,
             replyEvidenceDoc: "",
             status: DisputeStatus.Initiated,
             judgeId: 0,
@@ -303,7 +291,10 @@ contract NetState {
         Dispute[] memory result = new Dispute[](disputeCounter);
 
         for (uint256 i = 1; i <= disputeCounter; i++) {
-            if (keccak256(abi.encodePacked(disputes[i].tag)) == keccak256(abi.encodePacked(_tag))) {
+            if (
+                keccak256(abi.encodePacked(disputes[i].tag)) ==
+                keccak256(abi.encodePacked(_tag))
+            ) {
                 result[count] = disputes[i];
                 count++;
             }
@@ -311,16 +302,18 @@ contract NetState {
         return result;
     }
 
-      function makeDecision(uint256 _disputeId, string memory _decision)
+    function makeDecision(uint256 _disputeId, string memory _decision)
         external
         onlyJudge(_disputeId, disputes[_disputeId].judgeId)
     {
-        require(disputes[_disputeId].status == DisputeStatus.Hearing, "Dispute not in the correct status");
+        require(
+            disputes[_disputeId].status == DisputeStatus.Hearing,
+            "Dispute not in the correct status"
+        );
 
         disputes[_disputeId].status = DisputeStatus.Decision;
         disputes[_disputeId].decisionByJudge = _decision;
 
-
-       emit DecisionMade(_disputeId, _decision);
+        emit DecisionMade(_disputeId, _decision);
     }
 }
