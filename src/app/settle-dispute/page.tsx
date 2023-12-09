@@ -14,8 +14,7 @@ import {
     useToast
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
-
-
+import { ABI, CONTRACT_ADDRESS } from '@/lib/const';
 
 export default function SettleDispute() {
     const [party1name, setParty1Name] = useState('');
@@ -95,16 +94,19 @@ export default function SettleDispute() {
                                 bg="white"
                                 type="text"
                                 value={party1name}
-                                onChange={(e) => setParty1Name(e.target.value)}
+                                onChange={(e:any) => setParty1Name(e.target.value)}
                             />
                         </FormControl>
 
                         <FormControl>
                             <FormLabel>Summary</FormLabel>
-                            <Input
+                            <Textarea
+                                rows={4}
                                 type="text"
+                                resize="vertical"
                                 value={summary}
-                                onChange={(e) => setSummary(e.target.value)}
+                                placeholder="Enter summary here..."
+                                onChange={(e:any) => setSummary(e.target.value)}
                             />
                         </FormControl>
 
@@ -113,7 +115,7 @@ export default function SettleDispute() {
                             <Input
                                 type="text"
                                 value={tag}
-                                onChange={(e) => setTag(e.target.value)}
+                                onChange={(e:any) => setTag(e.target.value)}
                             />
                         </FormControl>
 
@@ -122,7 +124,7 @@ export default function SettleDispute() {
                             <Input
                                 type="text"
                                 value={evidenceDoc}
-                                onChange={(e) => setEvidenceDoc(e.target.value)}
+                                onChange={(e:any) => setEvidenceDoc(e.target.value)}
                             />
                         </FormControl>
 
@@ -131,7 +133,7 @@ export default function SettleDispute() {
                             <Input
                                 type="text"
                                 value={party2}
-                                onChange={(e) => setParty2(e.target.value)}
+                                onChange={(e:any) => setParty2(e.target.value)}
                             />
                         </FormControl>
 
@@ -140,7 +142,7 @@ export default function SettleDispute() {
                             <Input
                                 type="text"
                                 value={party2name}
-                                onChange={(e) => setParty2Name(e.target.value)}
+                                onChange={(e:any) => setParty2Name(e.target.value)}
                             />
                         </FormControl>
 
