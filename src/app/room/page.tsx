@@ -8,13 +8,13 @@ interface RoomDetails {
   };
 }
 
-const createRandomRoom = async () => {
+const createRoom = async () => {
   console.log("called");
   console.log(process.env.NEXT_PUBLIC_API_KEY);
   const res = await fetch("https://api.huddle01.com/api/v1/create-room", {
     method: "POST",
     body: JSON.stringify({
-      title: "Test Room",
+      title: "Hearing Room",
     }),
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +30,7 @@ const createRandomRoom = async () => {
 
 export default async function Home() {
   console.log("here");
-  const roomId = await createRandomRoom();
+  const roomId = await createRoom();
 
   console.log({ roomId });
 
