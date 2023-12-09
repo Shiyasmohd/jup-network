@@ -188,7 +188,7 @@ contract NetState {
         }
         return allJudges;
     }
-
+//fn for SettleDispute
     function initiateDispute(
         string memory _party1name,
         string memory _summary,
