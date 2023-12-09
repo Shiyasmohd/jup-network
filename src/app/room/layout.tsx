@@ -4,9 +4,9 @@ import { Inter } from "next/font/google";
 // import "./globals.css";
 
 
-// import style from "./style.module.css";
+import styles from "./styles.module.css";
 
-// Components
+
 import Navbar from "@/components/common/Navbar";
 import HuddleContextProvider from "@/components/ClientComponents/HuddleContextProvider";
 import { cn } from "@/utils/helpers";
@@ -25,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={cn("min-h-screen relative font-inter", inter.className)}>
+      <body className={`${styles.body_color} ${cn("min-h-screen relative font-inter", inter.className)}`}>
         <Navbar />
         <HuddleContextProvider>{children}</HuddleContextProvider>
       </body>

@@ -1,7 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 
+@tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+.noScrollbar::-webkit-scrollbar {
+  width: 0px;
+}
 * {
   box-sizing: border-box;
   padding: 0;
@@ -46,4 +56,16 @@ body {
   opacity: 0;
   cursor: pointer;
 
+}
+
+.maskAvatar {
+  -webkit-mask-image: url("/images/Mask.svg");
+  mask-image: url("/images/Mask.svg");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  aspect-ratio: 1/1;
 }
