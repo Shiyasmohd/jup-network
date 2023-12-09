@@ -70,7 +70,7 @@ export const subscribeToIncomingBlogs = async (
     // callback: any
 ) => {
 
-    const contentTopic = "/waku-hh-podcast-sub/channel/" + userWallet;
+    const contentTopic = "/netstate/0/" + userWallet;
 
     const decoder = createDecoder(contentTopic);
     console.log("subscribing to incoming blogs for topic", userWallet);
