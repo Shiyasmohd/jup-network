@@ -1,0 +1,8 @@
+
+.noScrollbar::-webkit-scrollbar {
+  width: 0px;
+}
+
+.body_color {
+  background-color: #121212;
+}
