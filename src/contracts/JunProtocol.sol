@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract NetState {
+contract JunProtocol {
     address public admin;
 
     enum DisputeStatus {
@@ -95,21 +95,19 @@ contract NetState {
         emit JudgeVerified(_judgeId);
     }
 
-    function updateJudgeLevel(uint256 _judgeId, uint256 _newLevel)
-        external
-        onlyAdmin
-    {
+    function updateJudgeLevel(
+        uint256 _judgeId,
+        uint256 _newLevel
+    ) external onlyAdmin {
         require(judges[_judgeId].isVerified, "Judge is not verified");
         judges[_judgeId].level = _newLevel;
 
         emit JudgeLevelUpdated(_judgeId, _newLevel);
     }
 
-    function getJudgesByStatus(bool _isVerified)
-        external
-        view
-        returns (Judge[] memory)
-    {
+    function getJudgesByStatus(
+        bool _isVerified
+    ) external view returns (Judge[] memory) {
         uint256 count;
         Judge[] memory result = new Judge[](judgeCounter);
 
@@ -122,11 +120,9 @@ contract NetState {
         return result;
     }
 
-    function getJudgesByLevel(uint256 _level)
-        external
-        view
-        returns (Judge[] memory)
-    {
+    function getJudgesByLevel(
+        uint256 _level
+    ) external view returns (Judge[] memory) {
         uint256 count;
         Judge[] memory result = new Judge[](judgeCounter);
 
@@ -139,11 +135,9 @@ contract NetState {
         return result;
     }
 
-    function getJudgesByTags(string[] memory _tags)
-        external
-        view
-        returns (Judge[] memory)
-    {
+    function getJudgesByTags(
+        string[] memory _tags
+    ) external view returns (Judge[] memory) {
         uint256 count;
         Judge[] memory result = new Judge[](judgeCounter);
 
@@ -156,11 +150,10 @@ contract NetState {
         return result;
     }
 
-    function hasCommonTag(string[] memory _tagsA, string[] memory _tagsB)
-        internal
-        pure
-        returns (bool)
-    {
+    function hasCommonTag(
+        string[] memory _tagsA,
+        string[] memory _tagsB
+    ) internal pure returns (bool) {
         for (uint256 i = 0; i < _tagsA.length; i++) {
             for (uint256 j = 0; j < _tagsB.length; j++) {
                 if (
@@ -206,9 +199,10 @@ contract NetState {
         emit DisputeInitiated(disputeCounter, msg.sender, _party2);
     }
 
-    function replyToDispute(uint256 _disputeId, string memory _replyEvidenceDoc)
-        external
-    {
+    function replyToDispute(
+        uint256 _disputeId,
+        string memory _replyEvidenceDoc
+    ) external {
         require(
             disputes[_disputeId].status == DisputeStatus.Initiated,
             "Dispute is not in the correct status"
@@ -217,10 +211,10 @@ contract NetState {
         disputes[_disputeId].status = DisputeStatus.Reply;
     }
 
-    function assignJudgeToDispute(uint256 _disputeId, uint256 _judgeId)
-        external
-        onlyAdmin
-    {
+    function assignJudgeToDispute(
+        uint256 _disputeId,
+        uint256 _judgeId
+    ) external onlyAdmin {
         require(
             disputes[_disputeId].status == DisputeStatus.Reply,
             "Dispute not in the correct status"
@@ -241,20 +235,16 @@ contract NetState {
         return allDisputes;
     }
 
-    function getDetailsOfDispute(uint256 _disputeId)
-        external
-        view
-        returns (Dispute memory)
-    {
+    function getDetailsOfDispute(
+        uint256 _disputeId
+    ) external view returns (Dispute memory) {
         require(_disputeId <= disputeCounter, "Invalid dispute ID");
         return disputes[_disputeId];
     }
 
-    function getDisputesByParty(address _party)
-        external
-        view
-        returns (Dispute[] memory)
-    {
+    function getDisputesByParty(
+        address _party
+    ) external view returns (Dispute[] memory) {
         uint256 count;
         Dispute[] memory result = new Dispute[](disputeCounter);
 
@@ -267,11 +257,9 @@ contract NetState {
         return result;
     }
 
-    function getDisputesOfAJudge(uint256 _judgeId)
-        external
-        view
-        returns (Dispute[] memory)
-    {
+    function getDisputesOfAJudge(
+        uint256 _judgeId
+    ) external view returns (Dispute[] memory) {
         uint256 count;
         Dispute[] memory result = new Dispute[](disputeCounter);
 
@@ -284,11 +272,9 @@ contract NetState {
         return result;
     }
 
-    function getDisputesByTag(string memory _tag)
-        external
-        view
-        returns (Dispute[] memory)
-    {
+    function getDisputesByTag(
+        string memory _tag
+    ) external view returns (Dispute[] memory) {
         uint256 count;
         Dispute[] memory result = new Dispute[](disputeCounter);
 
@@ -304,10 +290,10 @@ contract NetState {
         return result;
     }
 
-    function makeDecision(uint256 _disputeId, string memory _decision)
-        external
-        onlyJudge(_disputeId, disputes[_disputeId].judgeId)
-    {
+    function makeDecision(
+        uint256 _disputeId,
+        string memory _decision
+    ) external onlyJudge(_disputeId, disputes[_disputeId].judgeId) {
         require(
             disputes[_disputeId].status == DisputeStatus.Hearing,
             "Dispute not in the correct status"
@@ -319,26 +305,27 @@ contract NetState {
         emit DecisionMade(_disputeId, _decision);
     }
 
-    function getDisputesOfAJudgeByWallet(address _judgeWallet) external view returns (Dispute[] memory) {
-    uint256 count;
-    Dispute[] memory result = new Dispute[](disputeCounter);
+    function getDisputesOfAJudgeByWallet(
+        address _judgeWallet
+    ) external view returns (Dispute[] memory) {
+        uint256 count;
+        Dispute[] memory result = new Dispute[](disputeCounter);
 
-    for (uint256 i = 1; i <= disputeCounter; i++) {
-        if (disputes[i].judgeId > 0) {
-            uint256 judgeId = disputes[i].judgeId;
-            if (judges[judgeId].judgeWallet == _judgeWallet) {
-                result[count] = disputes[i];
-                count++;
+        for (uint256 i = 1; i <= disputeCounter; i++) {
+            if (disputes[i].judgeId > 0) {
+                uint256 judgeId = disputes[i].judgeId;
+                if (judges[judgeId].judgeWallet == _judgeWallet) {
+                    result[count] = disputes[i];
+                    count++;
+                }
             }
         }
+
+        // Resize the result array to remove any unused slots
+        assembly {
+            mstore(result, count)
+        }
+
+        return result;
     }
-
-    // Resize the result array to remove any unused slots
-    assembly {
-        mstore(result, count)
-    }
-
-    return result;
-}
-
 }

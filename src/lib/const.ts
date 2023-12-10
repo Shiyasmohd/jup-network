@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x48D0445071e206cA2f0B31f26643d7a4f8288326"
+export const CONTRACT_ADDRESS = "0x4bac551BeD46D1CE226A476a38081c2eE4d1B833"
 
 export const ABI = [
     {
@@ -423,6 +423,11 @@ export const ABI = [
                         "type": "uint256"
                     },
                     {
+                        "internalType": "address",
+                        "name": "judgeWallet",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "string",
                         "name": "bio",
                         "type": "string"
@@ -743,6 +748,77 @@ export const ABI = [
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "_judgeWallet",
+                "type": "address"
+            }
+        ],
+        "name": "getDisputesOfAJudgeByWallet",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "disputeId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "party1",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "summary",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "tag",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "evidenceDoc",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "party2",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "replyEvidenceDoc",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "enum NetState.DisputeStatus",
+                        "name": "status",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "judgeId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "decisionByJudge",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct NetState.Dispute[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint256",
                 "name": "_level",
                 "type": "uint256"
@@ -756,6 +832,11 @@ export const ABI = [
                         "internalType": "uint256",
                         "name": "judgeId",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "judgeWallet",
+                        "type": "address"
                     },
                     {
                         "internalType": "string",
@@ -809,6 +890,11 @@ export const ABI = [
                         "type": "uint256"
                     },
                     {
+                        "internalType": "address",
+                        "name": "judgeWallet",
+                        "type": "address"
+                    },
+                    {
                         "internalType": "string",
                         "name": "bio",
                         "type": "string"
@@ -858,6 +944,11 @@ export const ABI = [
                         "internalType": "uint256",
                         "name": "judgeId",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "judgeWallet",
+                        "type": "address"
                     },
                     {
                         "internalType": "string",
@@ -920,6 +1011,11 @@ export const ABI = [
                 "internalType": "uint256",
                 "name": "judgeId",
                 "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "judgeWallet",
+                "type": "address"
             },
             {
                 "internalType": "string",

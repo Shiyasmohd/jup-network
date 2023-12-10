@@ -10,7 +10,8 @@ export default function Navbar() {
     return (
         <div className="px-4 my-6">
             <div className="flex justify-between items-center max-w-screen-xl mx-auto">
-                <Image src={Logo} alt="" className="w-[150px]" />
+                {/* <Image src={Logo} alt="" className="w-[150px]" /> */}
+                <p className="font-bold">Justice Protocol</p>
                 <Link href="/my-cases">
                     <p>My Cases</p>
                 </Link>

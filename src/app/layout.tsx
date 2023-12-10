@@ -6,7 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import '@rainbow-me/rainbowkit/styles.css';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { sepolia } from 'wagmi/chains';
+import { polygonMumbai, sepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import Navbar from '@/components/navbar';
@@ -27,7 +27,7 @@ const huddleClient = new HuddleClient({
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    sepolia
+    polygonMumbai
   ],
   [publicProvider()]
 );
