@@ -15,6 +15,7 @@ contract NetState {
 
     struct Judge {
         uint256 judgeId;
+        address judgeWallet;
         string bio;
         string licenseId;
         bool isVerified;
@@ -75,6 +76,7 @@ contract NetState {
         judgeCounter++;
         judges[judgeCounter] = Judge({
             judgeId: judgeCounter,
+            judgeWallet: msg.sender,
             bio: _bio,
             licenseId: _licenseId,
             isVerified: false,
@@ -316,4 +318,27 @@ contract NetState {
 
         emit DecisionMade(_disputeId, _decision);
     }
+
+    function getDisputesOfAJudgeByWallet(address _judgeWallet) external view returns (Dispute[] memory) {
+    uint256 count;
+    Dispute[] memory result = new Dispute[](disputeCounter);
+
+    for (uint256 i = 1; i <= disputeCounter; i++) {
+        if (disputes[i].judgeId > 0) {
+            uint256 judgeId = disputes[i].judgeId;
+            if (judges[judgeId].judgeWallet == _judgeWallet) {
+                result[count] = disputes[i];
+                count++;
+            }
+        }
+    }
+
+    // Resize the result array to remove any unused slots
+    assembly {
+        mstore(result, count)
+    }
+
+    return result;
+}
+
 }
