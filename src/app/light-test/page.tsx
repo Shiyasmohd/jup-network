@@ -4,14 +4,14 @@ import { shareFile, signAuthMessage, uploadEncryptedFile } from "../../lib/light
 
 
 const LighthouseApp: React.FC = () => {
- const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null);
 
-const handleFileChange = (e:any) => {
-  const selectedFile = e.target.files;
-  if (selectedFile) {
-    setFile(selectedFile);
-  }
-};
+  const handleFileChange = (e: any) => {
+    const selectedFile = e.target.files;
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
 
   const handleSignMessage = async () => {
     const result = await signAuthMessage();
@@ -21,18 +21,18 @@ const handleFileChange = (e:any) => {
   };
 
   const handleUploadFile = async () => {
-   
+
     if (file) {
-      const result = await uploadEncryptedFile( file);
+      const result = await uploadEncryptedFile(file);
       // Replace "your-signer-address" with the actual signer address
       if (result) {
         console.log("Encrypted File Status:", result);
         console.log(result.data[0].Hash)
-        shareFile(
-          result.data[0].Hash,
-          "0xe57f24e3c9c5be617e6d330d2b2308926188e398",
-          ["0x14C333676A49557bc299a8E379cAc2bDdf624064"]
-        );
+        // shareFile(
+        //   result.data[0].Hash,
+        //   "0xe57f24e3c9c5be617e6d330d2b2308926188e398",
+        //   ["0x14C333676A49557bc299a8E379cAc2bDdf624064"]
+        // );
       }
     }
   };

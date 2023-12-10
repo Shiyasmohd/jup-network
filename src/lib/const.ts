@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x106CB102df762ed8C2FdE2cFAB7f26e60565017E"
+export const CONTRACT_ADDRESS = "0x48D0445071e206cA2f0B31f26643d7a4f8288326"
 
 export const ABI = [
     {
@@ -72,11 +72,6 @@ export const ABI = [
         "inputs": [
             {
                 "internalType": "string",
-                "name": "_party1name",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
                 "name": "_summary",
                 "type": "string"
             },
@@ -94,11 +89,6 @@ export const ABI = [
                 "internalType": "address",
                 "name": "_party2",
                 "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "_party2name",
-                "type": "string"
             }
         ],
         "name": "initiateDispute",
@@ -156,12 +146,6 @@ export const ABI = [
             {
                 "indexed": false,
                 "internalType": "string",
-                "name": "name",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
                 "name": "licenseId",
                 "type": "string"
             }
@@ -202,11 +186,6 @@ export const ABI = [
     },
     {
         "inputs": [
-            {
-                "internalType": "string",
-                "name": "_name",
-                "type": "string"
-            },
             {
                 "internalType": "string",
                 "name": "_bio",
@@ -325,11 +304,6 @@ export const ABI = [
             },
             {
                 "internalType": "string",
-                "name": "party1name",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
                 "name": "summary",
                 "type": "string"
             },
@@ -347,11 +321,6 @@ export const ABI = [
                 "internalType": "address",
                 "name": "party2",
                 "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "party2name",
-                "type": "string"
             },
             {
                 "internalType": "string",
@@ -395,11 +364,6 @@ export const ABI = [
                     },
                     {
                         "internalType": "string",
-                        "name": "party1name",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
                         "name": "summary",
                         "type": "string"
                     },
@@ -417,11 +381,6 @@ export const ABI = [
                         "internalType": "address",
                         "name": "party2",
                         "type": "address"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "party2name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -462,11 +421,6 @@ export const ABI = [
                         "internalType": "uint256",
                         "name": "judgeId",
                         "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -526,11 +480,6 @@ export const ABI = [
                     },
                     {
                         "internalType": "string",
-                        "name": "party1name",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
                         "name": "summary",
                         "type": "string"
                     },
@@ -548,11 +497,6 @@ export const ABI = [
                         "internalType": "address",
                         "name": "party2",
                         "type": "address"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "party2name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -607,11 +551,6 @@ export const ABI = [
                     },
                     {
                         "internalType": "string",
-                        "name": "party1name",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
                         "name": "summary",
                         "type": "string"
                     },
@@ -629,11 +568,6 @@ export const ABI = [
                         "internalType": "address",
                         "name": "party2",
                         "type": "address"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "party2name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -688,11 +622,6 @@ export const ABI = [
                     },
                     {
                         "internalType": "string",
-                        "name": "party1name",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
                         "name": "summary",
                         "type": "string"
                     },
@@ -710,11 +639,6 @@ export const ABI = [
                         "internalType": "address",
                         "name": "party2",
                         "type": "address"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "party2name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -769,11 +693,6 @@ export const ABI = [
                     },
                     {
                         "internalType": "string",
-                        "name": "party1name",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
                         "name": "summary",
                         "type": "string"
                     },
@@ -791,11 +710,6 @@ export const ABI = [
                         "internalType": "address",
                         "name": "party2",
                         "type": "address"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "party2name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -842,11 +756,6 @@ export const ABI = [
                         "internalType": "uint256",
                         "name": "judgeId",
                         "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -901,11 +810,6 @@ export const ABI = [
                     },
                     {
                         "internalType": "string",
-                        "name": "name",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
                         "name": "bio",
                         "type": "string"
                     },
@@ -954,11 +858,6 @@ export const ABI = [
                         "internalType": "uint256",
                         "name": "judgeId",
                         "type": "uint256"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -1021,11 +920,6 @@ export const ABI = [
                 "internalType": "uint256",
                 "name": "judgeId",
                 "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
             },
             {
                 "internalType": "string",
