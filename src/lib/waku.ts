@@ -7,8 +7,8 @@ import {
     LightNode,
     DecodedMessage,
 } from "@waku/sdk";
-import { DisputeData } from "./types";
-import { DisputeDataBuf } from "./helper";
+import { DisputeData, DisputeReplyData } from "./types";
+import { DisputeDataBuf, DisputeReplyDataBuf } from "./helper";
 
 export const createNode = async () => {
     // Create and start a Light Node
@@ -23,7 +23,7 @@ export const sendDispute = async (
     party2WalletAddr: string
 ) => {
     // Choose a content topic
-    const contentTopic = "/netstate/0/" + party2WalletAddr;
+    const contentTopic = "/netstate/5/" + party2WalletAddr;
 
     // Create a message encoder and decoder
     const encoder = createEncoder({ contentTopic });
@@ -42,19 +42,66 @@ export const sendDispute = async (
         .then((res) => console.log(res));
 };
 
+export const sendReply = async (
+    node: LightNode,
+    newDispute: DisputeReplyData,
+    party2WalletAddr: string
+) => {
+    // Choose a content topic
+    const contentTopic = "/netstate/5/" + party2WalletAddr;
+
+    console.log({ newDispute })
+
+    // Create a message encoder and decoder
+    const encoder = createEncoder({ contentTopic });
+    console.log({ contentTopic })
+    const disputeMessage = DisputeReplyDataBuf.create(newDispute);
+    console.log("blogMessage", disputeMessage);
+    // Serialise the message using Protobuf
+    const serialisedMessage = DisputeReplyDataBuf.encode(disputeMessage).finish();
+    console.log("serialisedMessage", serialisedMessage);
+
+    // Send the message using Light Push
+    await node.lightPush
+        .send(encoder, {
+            payload: serialisedMessage,
+        })
+        .then((res) => console.log(res));
+};
+
 
 export const retrieveExistingVotes = async (
     waku: LightNode,
     userWallet: string
     // callback: (pollMessage: IBlogData) => void,
 ) => {
-    const contentTopic = "/netstate/0/" + userWallet;
+    const contentTopic = "/netstate/5/" + userWallet;
 
     const decoder = createDecoder(contentTopic);
     const _callback = (wakuMessage: DecodedMessage): void => {
         if (!wakuMessage.payload) return;
         const pollMessageObj = DisputeDataBuf.decode(wakuMessage.payload);
         const pollMessage = pollMessageObj.toJSON() as DisputeData;
+        console.log("decoded ", pollMessage);
+        // callback(pollMessage);
+    };
+    // Query the Store peer
+    let result = await waku.store.queryWithOrderedCallback([decoder], _callback);
+    console.log("result", result);
+};
+
+export const retrieveExistingVotes2 = async (
+    waku: LightNode,
+    userWallet: string
+    // callback: (pollMessage: IBlogData) => void,
+) => {
+    const contentTopic = "/netstate/5/" + userWallet;
+
+    const decoder = createDecoder(contentTopic);
+    const _callback = (wakuMessage: DecodedMessage): void => {
+        if (!wakuMessage.payload) return;
+        const pollMessageObj = DisputeReplyDataBuf.decode(wakuMessage.payload);
+        const pollMessage = pollMessageObj.toJSON() as DisputeReplyData;
         console.log("decoded ", pollMessage);
         // callback(pollMessage);
     };
@@ -70,7 +117,7 @@ export const subscribeToIncomingBlogs = async (
     // callback: any
 ) => {
 
-    const contentTopic = "/netstate/0/" + userWallet;
+    const contentTopic = "/netstate/5/" + userWallet;
 
     const decoder = createDecoder(contentTopic);
     console.log("subscribing to incoming blogs for topic", userWallet);

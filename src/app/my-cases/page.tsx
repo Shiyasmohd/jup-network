@@ -1,6 +1,7 @@
 "use client"
-import { DisputeDataBuf } from '@/lib/helper';
-import { DisputeData } from '@/lib/types';
+import MessageCard from '@/components/card';
+import { DisputeDataBuf, DisputeReplyDataBuf, pushUniqueElement } from '@/lib/helper';
+import { DisputeData, DisputeReplyData } from '@/lib/types';
 import { createNode } from '@/lib/waku';
 import {
     Menu,
@@ -19,6 +20,7 @@ import { useAccount } from 'wagmi';
 export default function MyCases() {
 
     const [wakuNode, setWakuNode] = useState<LightNode | null>(null);
+    const [disputeMesasages, setDisputeMessages] = useState<DisputeData[]>([])
     const account = useAccount()
 
     useEffect(() => {
@@ -38,7 +40,7 @@ export default function MyCases() {
         userWallet: string
         // callback: (pollMessage: IBlogData) => void,
     ) => {
-        const contentTopic = "/netstate/0/" + userWallet;
+        const contentTopic = "/netstate/5/" + userWallet;
 
         const decoder = createDecoder(contentTopic);
         const _callback = (wakuMessage: DecodedMessage): void => {
@@ -46,6 +48,8 @@ export default function MyCases() {
             const pollMessageObj = DisputeDataBuf.decode(wakuMessage.payload);
             const pollMessage = pollMessageObj.toJSON() as DisputeData;
             console.log("decoded ", pollMessage);
+            let tempMessage = pushUniqueElement(disputeMesasages, pollMessage)
+            setDisputeMessages([...tempMessage])
             // callback(pollMessage);
         };
         // Query the Store peer
@@ -60,7 +64,7 @@ export default function MyCases() {
         // callback: any
     ) => {
 
-        const contentTopic = "/netstate/0/" + userWallet;
+        const contentTopic = "/netstate/5/" + userWallet;
 
         const decoder = createDecoder(contentTopic);
         console.log("subscribing to incoming blogs for topic", userWallet);
@@ -71,6 +75,8 @@ export default function MyCases() {
             const pollMessageObj = DisputeDataBuf.decode(blogMessage.payload);
             const pollMessage = pollMessageObj.toJSON() as DisputeData;
             console.log("decoded ", pollMessage);
+            let tempMessage = pushUniqueElement(disputeMesasages, pollMessage)
+            setDisputeMessages([...tempMessage])
             // You can invoke the callback function if needed
             // callback(pollMessage);
         };
@@ -83,6 +89,26 @@ export default function MyCases() {
 
     };
 
+    const retrieveExistingVotes2 = async (
+        waku: LightNode,
+        userWallet: string
+        // callback: (pollMessage: IBlogData) => void,
+    ) => {
+        const contentTopic = "/netstate/5/" + userWallet;
+
+        const decoder = createDecoder(contentTopic);
+        const _callback = (wakuMessage: DecodedMessage): void => {
+            if (!wakuMessage.payload) return;
+            const pollMessageObj = DisputeReplyDataBuf.decode(wakuMessage.payload);
+            const pollMessage = pollMessageObj.toJSON() as DisputeReplyData;
+            console.log("decoded ", pollMessage);
+            // callback(pollMessage);
+        };
+        // Query the Store peer
+        let result = await waku.store.queryWithOrderedCallback([decoder], _callback);
+        console.log("result", result);
+    };
+
     const subscribeToVotes = async () => {
         if (wakuNode == null) {
             console.log("Waku node not stared")
@@ -90,6 +116,7 @@ export default function MyCases() {
         }
 
         await retrieveExistingVotes(wakuNode, account.address as string);
+        await retrieveExistingVotes2(wakuNode, account.address as string);
         await subscribeToIncomingBlogs(wakuNode, account.address as string);
     };
 
@@ -98,8 +125,25 @@ export default function MyCases() {
     }, [wakuNode])
 
     return (
-        <div className="">
+        <div className="max-w-screen-xl mx-auto mt-6 px-4">
 
+            <p className='text-4xl font-6xl tracking-tighter w-[600px] my-6 font-bold'>My Cases</p>
+
+            <div className='grid grid-cols-4 gap-4'>
+                {
+                    disputeMesasages.map((item, index) => (
+                        <MessageCard
+                            wallet={item.party1addr}
+                            summary={item.summary}
+                            evidenceDoc={item.evidenceDoc}
+                            disputeId={item.disputeId}
+                            tag={item.tag}
+                            wakuNode={wakuNode}
+                            key={index}
+                        />
+                    ))
+                }
+            </div>
         </div>
     )
 }

@@ -28,14 +28,16 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons'
 import { createNode, sendDispute } from '@/lib/waku';
 import { LightNode } from '@waku/sdk';
+import { shareFile, uploadEncryptedFile } from '@/lib/light-house';
+import { useAccount } from 'wagmi';
 
 export default function SettleDispute() {
-    const [party1name, setParty1Name] = useState('');
+
+    const account = useAccount()
     const [summary, setSummary] = useState('');
     const [tag, setTag] = useState('');
     const [evidenceDoc, setEvidenceDoc] = useState<any>();
     const [party2, setParty2] = useState('');
-    const [party2name, setParty2Name] = useState('');
     const toast = useToast();
     const [wakuNode, setWakuNode] = useState<LightNode | null>(null);
 
@@ -45,7 +47,7 @@ export default function SettleDispute() {
         e.preventDefault();
         // console.log("party1name :", party1name);
         try {
-            await subscribeChannel();
+            await initiateDispute();
         } catch (error) {
             console.error('Error submitting the form:', error);
             toast({
@@ -59,7 +61,7 @@ export default function SettleDispute() {
 
     };
 
-    const subscribeChannel = async () => {
+    const initiateDispute = async () => {
 
         //@ts-ignore
         const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider)
@@ -70,8 +72,9 @@ export default function SettleDispute() {
         //@ts-ignore
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         const signer = provider.getSigner();
-        console.log(party1name, summary, tag, evidenceDoc, party2, party2name)
-        await contract.connect(signer).initiateDispute(party1name, summary, tag, "evidenceDoc", party2, party2name,).then(async (res: any) => {
+
+        let fileLink = await handleUploadFile()
+        await contract.connect(signer).initiateDispute(summary, tag, fileLink, party2).then(async (res: any) => {
             toast({
                 title: 'Initiating Dispute',
                 status: 'loading',
@@ -79,6 +82,7 @@ export default function SettleDispute() {
                 isClosable: false,
             })
             await res.wait();
+            let disputeId = await contract.disputeCounter()
             toast({
                 title: "Dispute Initiated",
                 status: 'success',
@@ -94,20 +98,47 @@ export default function SettleDispute() {
                 })
                 return
             }
+            toast({
+                title: 'Sending waku node',
+                status: 'success',
+                duration: 2000,
+                isClosable: false,
+            })
             await sendDispute(
                 wakuNode,
                 {
-                    party1name,
-                    evidenceDoc,
+                    party1addr: account.address as string,
+                    evidenceDoc: fileLink,
                     party2addr: party2,
-                    party2name,
                     summary,
-                    tag
+                    tag,
+                    disputeId: Number(disputeId).toString(),
+                    reply: "false"
                 },
                 party2
-            )
+            ).then((res) => {
+                console.log({ res })
+            })
         });
     }
+
+    const handleUploadFile = async () => {
+        let link = ""
+        if (evidenceDoc) {
+            const result = await uploadEncryptedFile(evidenceDoc);
+            if (result) {
+                console.log("Encrypted File Status:", result);
+                console.log(result.data[0].Hash)
+                link = `https://decrypt.mesh3.network/evm/${result.data[0].Hash}`
+                shareFile(
+                    result.data[0].Hash,
+                    account.address as string,
+                    [party2]
+                );
+            }
+        }
+        return link
+    };
 
 
 
@@ -124,24 +155,13 @@ export default function SettleDispute() {
 
 
     return (
+        <Flex justifyContent="center" flexDir={"column"} alignItems={"center"} className='gap-6 font-bold'>
 
-
-
-        <Flex justifyContent="center">
-
+            <p className='text-4xl font-6xl tracking-tighter w-[600px]'>Dispute Details</p>
 
             <Box p={5} shadow="md" borderWidth="1px" borderRadius="md" width="600px" bg="rgba(255, 255, 255)">
                 <form onSubmit={handleFormSubmit}>
                     <Stack spacing={3}>
-                        <FormControl >
-                            <FormLabel>Your Name</FormLabel>
-                            <Input
-                                bg="white"
-                                type="text"
-                                value={party1name}
-                                onChange={(e: any) => setParty1Name(e.target.value)}
-                            />
-                        </FormControl>
 
                         <FormControl>
                             <FormLabel>Summary</FormLabel>
@@ -175,7 +195,7 @@ export default function SettleDispute() {
                         <FormControl>
                             <FormLabel>Evidence Document</FormLabel>
                             <div className="upload-btn-wrapper mt-4 cursor-pointer">
-                                <Button className="btn">{evidenceDoc != null ? "evidenceDoc[0].name" : "Upload Document"}</Button>
+                                <Button className="btn">{evidenceDoc != null ? evidenceDoc[0].name : "Upload Document"}</Button>
                                 <Input type="file" name="myfile" onChange={(e) => setEvidenceDoc(e.target.files)} />
                             </div>
                         </FormControl>

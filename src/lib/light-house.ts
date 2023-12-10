@@ -122,7 +122,7 @@ export const shareFile = async (
   Hash: string,
   party1Address: string,
 
-  accessAddresses:string[]
+  accessAddresses: string[]
 ) => {
   try {
     // CID of the encrypted file that you want to share
@@ -132,11 +132,11 @@ export const shareFile = async (
     const publicKey = party1Address; // Example: "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
 
     const publicKeyUserB = accessAddresses; //Example: 0x487fc2fE07c593EAb555729c3DD6dF85020B5160
-console.log({cid})
-console.log(publicKey)
+    console.log({ cid })
+    console.log(publicKey)
 
-console.log(publicKeyUserB)
-  const encryptionAuth = await signAuthMessage();
+    console.log(publicKeyUserB)
+    const encryptionAuth = await signAuthMessage();
     const shareResponse = await lighthouse.shareFile(
       publicKey,
       publicKeyUserB,
