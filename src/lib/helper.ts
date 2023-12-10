@@ -17,6 +17,10 @@ export const DisputeReplyDataBuf = new protobuf.Type("DisputeReplyData")
     .add(new protobuf.Field("disputeId", 4, "string"))
     .add(new protobuf.Field("reply", 5, "string"))
 
+export const MeetBuf = new protobuf.Type("Meet")
+    .add(new protobuf.Field("time", 1, "string"))
+    .add(new protobuf.Field("roomId", 2, "string"))
+
 
 export function pushUniqueElement<T>(arr: T[], element: T): T[] {
     if (!arr.includes(element)) {

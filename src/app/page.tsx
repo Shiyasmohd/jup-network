@@ -9,12 +9,12 @@ export default function Home() {
   return (
     <main className="flex justify-center gap-8 items-center min-h-[calc(100vh-200px)]">
       <Link href="/record-contract">
-        <Button colorScheme='blue' className='w-[200px] bg-[#2b6cb0]'>
-          Record Contract
+        <Button colorScheme='blue' className='w-[250px] bg-[#2b6cb0] h-[100px]'>
+          Register Contract
         </Button>
       </Link>
       <Link href="settle-dispute">
-        <Button colorScheme='green' className='w-[200px] bg-[#37a169]'>
+        <Button colorScheme='green' className='w-[250px] bg-[#37a169] h-[100px]'>
           Settle Dispute
         </Button>
       </Link>

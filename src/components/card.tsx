@@ -124,27 +124,19 @@ export default function MessageCard(props: MessageCardProps) {
         <Card maxW='sm' className='relative' >
             <CardBody>
                 <Badge colorScheme='green' className='absolute top-2 right-2 rounded-full text-xs px-3 py-0.5'>
-                    {props.tag}
+                    {props.summary}
                 </Badge>
                 <Stack mt='6' spacing='3'>
-                    <Heading size='md'>{shortenAddress(props.wallet)}</Heading>
+                    <Heading size='md'>{shortenAddress("0xD8547c84ced4F10A32DC9B5dE4327e36740767C3")}</Heading>
                     <Text>
-                        {
+                        {/* {
                             get50Words(props.summary)
-                        }
+                        } */}
                     </Text>
                 </Stack>
             </CardBody>
             <Divider />
             <CardFooter className='flex justify-end gap-4'>
-
-
-                {
-
-                    props.wakuNode != null ?
-                        "Yes" : "No"
-                }
-
 
                 <Button variant='solid' colorScheme='blue' onClick={view.onOpen} className='bg-[#2b6cb0]'>
                     View
@@ -153,14 +145,14 @@ export default function MessageCard(props: MessageCardProps) {
                 <Modal onClose={view.onClose} isOpen={view.isOpen} isCentered>
                     <ModalOverlay />
                     <ModalContent className='max-h-[90vh] overflow-y-auto'>
-                        <ModalHeader className='text-sm'>{props.wallet}</ModalHeader>
+                        <ModalHeader className='text-sm'>{"0xD8547c84ced4F10A32DC9B5dE4327e36740767C3"}</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
                             <p className='font-bold'>Summary</p>
                             {props.summary}
                             <br />
                             <br />
-                            <Link href={props.evidenceDoc} target="_blank" className='text-blue-500'>
+                            <Link href={props.wallet} target="_blank" className='text-blue-500'>
                                 <Button variant='solid' colorScheme='blue' className='bg-[#2b6cb0]'>
                                     View Evidence
                                 </Button>
@@ -171,10 +163,10 @@ export default function MessageCard(props: MessageCardProps) {
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
-
+                {/* 
                 <Button variant='solid' colorScheme='blue' onClick={replay.onOpen} className='bg-[#2b6cb0]'>
-                    Replay
-                </Button>
+                    Reply
+                </Button> */}
 
                 <Modal onClose={replay.onClose} isOpen={replay.isOpen} isCentered>
                     <ModalOverlay />

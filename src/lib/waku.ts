@@ -7,8 +7,8 @@ import {
     LightNode,
     DecodedMessage,
 } from "@waku/sdk";
-import { DisputeData, DisputeReplyData } from "./types";
-import { DisputeDataBuf, DisputeReplyDataBuf } from "./helper";
+import { DisputeData, DisputeReplyData, Meet } from "./types";
+import { DisputeDataBuf, DisputeReplyDataBuf, MeetBuf } from "./helper";
 
 export const createNode = async () => {
     // Create and start a Light Node
@@ -69,13 +69,59 @@ export const sendReply = async (
         .then((res) => console.log(res));
 };
 
+export const scheduleMeetMessage = async (
+    node: LightNode,
+    newDispute: Meet,
+    wallet: string
+) => {
+    // Choose a content topic
+    const contentTopic = "/netstate/5/meet/" + wallet;
 
-export const retrieveExistingVotes = async (
+    console.log({ newDispute })
+
+    // Create a message encoder and decoder
+    const encoder = createEncoder({ contentTopic });
+    console.log({ contentTopic })
+    const disputeMessage = MeetBuf.create(newDispute);
+    console.log("blogMessage", disputeMessage);
+    // Serialise the message using Protobuf
+    const serialisedMessage = MeetBuf.encode(disputeMessage).finish();
+    console.log("serialisedMessage", serialisedMessage);
+
+    // Send the message using Light Push
+    await node.lightPush
+        .send(encoder, {
+            payload: serialisedMessage,
+        })
+        .then((res) => console.log(res));
+};
+
+
+export const getMeets = async (
     waku: LightNode,
     userWallet: string
     // callback: (pollMessage: IBlogData) => void,
 ) => {
     const contentTopic = "/netstate/5/" + userWallet;
+
+    const decoder = createDecoder(contentTopic);
+    const _callback = (wakuMessage: DecodedMessage): void => {
+        if (!wakuMessage.payload) return;
+        const pollMessageObj = MeetBuf.decode(wakuMessage.payload);
+        const pollMessage = pollMessageObj.toJSON() as Meet;
+        console.log("decoded ", pollMessage);
+        // callback(pollMessage);
+    };
+    // Query the Store peer
+    let result = await waku.store.queryWithOrderedCallback([decoder], _callback);
+    console.log("result", result);
+};
+export const retrieveExistingVotes = async (
+    waku: LightNode,
+    userWallet: string
+    // callback: (pollMessage: IBlogData) => void,
+) => {
+    const contentTopic = "/netstate/5/meet/" + userWallet;
 
     const decoder = createDecoder(contentTopic);
     const _callback = (wakuMessage: DecodedMessage): void => {

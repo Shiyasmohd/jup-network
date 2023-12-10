@@ -1,7 +1,7 @@
 // Components
 import IntroPage from "@/components/IntroPage/IntroPage";
 
-interface RoomDetails {
+export interface RoomDetails {
   message: string;
   data: {
     roomId: string;

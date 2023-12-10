@@ -14,3 +14,9 @@ export type DisputeReplyData = {
     disputeId: string;
     reply: string
 }
+
+
+export type Meet = {
+    time: number
+    roomId: string
+}

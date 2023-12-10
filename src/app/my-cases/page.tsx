@@ -131,7 +131,7 @@ export default function MyCases() {
 
             <div className='grid grid-cols-4 gap-4'>
                 {
-                    disputeMesasages.map((item, index) => (
+                    disputeMesasages.slice(0, 1).map((item, index) => (
                         <MessageCard
                             wallet={item.party1addr}
                             summary={item.summary}

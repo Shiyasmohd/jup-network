@@ -26,6 +26,14 @@ import {
 } from '@chakra-ui/react'
 import { ethers } from 'ethers';
 import { useState } from 'react';
+import React, { useEffect } from "react";
+import {
+    AnonAadhaarProvider,
+    LogInWithAnonAadhaar,
+    useAnonAadhaar,
+} from "anon-aadhaar-react";
+import crypto from "crypto";
+import { AnonAadhaarPCD, exportCallDataGroth16FromPCD } from "anon-aadhaar-pcd";
 
 export default function ApplyJudge() {
 
@@ -62,6 +70,23 @@ export default function ApplyJudge() {
             })
         })
     }
+
+    const [anonAadhaar] = useAnonAadhaar();
+    const [ready, setReady] = useState<boolean>(false);
+    const [pcd, setPcd] = useState<AnonAadhaarPCD>();
+    const app_id = process.env.NEXT_PUBLIC_APP_ID || "";
+    useEffect(() => {
+        setReady(true);
+    }, []);
+
+    useEffect(() => {
+        console.log("Anon Aadhaar status: ", anonAadhaar.status);
+        // const app_id = BigInt(
+        //   parseInt(crypto.randomBytes(20).toString("hex"), 16)
+        // ).toString();
+        // console.log("app id", app_id)
+
+    }, [anonAadhaar]);
 
 
     return (
@@ -109,6 +134,16 @@ export default function ApplyJudge() {
                             onChange={(e: any) => setLicense(e.target.value)}
                         />
                     </FormControl>
+
+                    <FormLabel>Connect Aadaar</FormLabel>
+                    {ready ? (
+                        <AnonAadhaarProvider _appId={app_id}>
+                            <p>{app_id}</p>
+                            <div>
+                                <LogInWithAnonAadhaar />
+                            </div>
+                        </AnonAadhaarProvider>
+                    ) : null}
 
                     <Button
                         colorScheme='facebook'
