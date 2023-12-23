@@ -130,7 +130,7 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
 
   return (
     <main className="flex h-screen flex-col items-center justify-center bg-lobby text-slate-100">
-      <h1>{state}</h1>
+      {/* <h1>{state}</h1> */}
       <div className="flex flex-col items-center justify-center gap-4 w-[26.25rem]">
         <div className="relative text-center flex items-center justify-center w-fit mx-auto">
           <Image

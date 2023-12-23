@@ -27,7 +27,7 @@ import { metadata } from '../layout';
 const Home = ({ params }: { params: { roomId: string } }) => {
   const { state } = useRoom({
     onLeave: () => {
-      push(`/${params.roomId}/lobby`);
+      push(`/room/${params.roomId}/lobby`);
     },
   });
   const { push } = useRouter();
@@ -52,7 +52,7 @@ const Home = ({ params }: { params: { roomId: string } }) => {
 
   useEffect(() => {
     if (state === 'idle') {
-      push(`/${params.roomId}/lobby`);
+      push(`/room/${params.roomId}/lobby`);
       return;
     } else {
       console.log('length', peerIds.length);
