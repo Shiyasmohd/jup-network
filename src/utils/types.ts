@@ -16,3 +16,6 @@ export type Peer = {
   displayName: string;
   avatarUrl: string;
 };
+export type TPeerMetadata = {
+  displayName: string;
+};

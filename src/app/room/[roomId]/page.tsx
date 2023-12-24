@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 // Components
-import BottomBar from '@/components/BottomBar/BottomBar';
-import Sidebar from '@/components/Sidebar/Sidebar';
-import GridLayout from '@/components/GridLayout/GridLayout';
-import Prompts from '@/components/common/Prompts';
+import BottomBar from "@/components/BottomBar/BottomBar";
+import Sidebar from "@/components/Sidebar/Sidebar";
+import GridLayout from "@/components/GridLayout/GridLayout";
+import Prompts from "@/components/common/Prompts";
 import {
   useRoom,
   useLocalPeer,
@@ -14,15 +14,16 @@ import {
   usePeerIds,
   useHuddle01,
   useDataMessage,
-} from '@huddle01/react/hooks';
-import { useRouter } from 'next/navigation';
-import AcceptRequest from '@/components/Modals/AcceptRequest';
-import useStore from '@/store/slices';
-import { toast } from 'react-hot-toast';
-import { Role } from '@huddle01/server-sdk/auth';
-import Chat from '@/components/Chat/Chat';
-import { metadata } from '../layout';
+} from "@huddle01/react/hooks";
+import { useRouter } from "next/navigation";
+import AcceptRequest from "@/components/Modals/AcceptRequest";
+import useStore from "@/store/slices";
+import { toast } from "react-hot-toast";
+import Chat from "@/components/Chat/Chat";
+import { metadata } from "../layout";
 // import Chat from '@/components/Chat/Chat';
+import { Recorder } from "@huddle01/server-sdk/recorder";
+import { AccessToken, Role } from "@huddle01/server-sdk/auth";
 
 const Home = ({ params }: { params: { roomId: string } }) => {
   const { state } = useRoom({
@@ -32,7 +33,9 @@ const Home = ({ params }: { params: { roomId: string } }) => {
   });
   const { push } = useRouter();
   // const { changePeerRole } = useAcl();
-  const [requestedPeerId, setRequestedPeerId] = useState('');
+  const [requestedPeerId, setRequestedPeerId] = useState("");
+    const [isRecording, setIsRecording] = useState<boolean>(false);
+
   const { showAcceptRequest, setShowAcceptRequest } = useStore();
   const addChatMessage = useStore((state) => state.addChatMessage);
   const addRequestedPeers = useStore((state) => state.addRequestedPeers);
@@ -50,12 +53,15 @@ const Home = ({ params }: { params: { roomId: string } }) => {
 
   const { huddleClient } = useHuddle01();
 
+  
+
   useEffect(() => {
-    if (state === 'idle') {
+    if (state === "idle") {
       push(`/room/${params.roomId}/lobby`);
       return;
     } else {
-      console.log('length', peerIds.length);
+  
+      console.log("length", peerIds.length);
       updateMetadata({
         displayName: userDisplayName,
         avatarUrl: avatarUrl,
@@ -66,7 +72,7 @@ const Home = ({ params }: { params: { roomId: string } }) => {
 
   useDataMessage({
     onMessage(payload, from, label) {
-      if (label === 'requestToSpeak') {
+      if (label === "requestToSpeak") {
         setShowAcceptRequest(true);
         setRequestedPeerId(from);
         addRequestedPeers(from);
@@ -75,7 +81,7 @@ const Home = ({ params }: { params: { roomId: string } }) => {
         }, 5000);
       }
 
-      if (label === 'chat' && from !== peerId) {
+      if (label === "chat" && from !== peerId) {
         const messagePayload = JSON.parse(payload);
         const newChatMessage = {
           name: messagePayload.name,
@@ -104,6 +110,20 @@ const Home = ({ params }: { params: { roomId: string } }) => {
       </div>
       {isChatOpen && <Chat />}
       <BottomBar />
+      <button
+        className="bg-blue-500 p-2 mx-2 rounded-lg"
+        onClick={async () => {
+          const status = isRecording
+            ? await fetch(`/api/stopRecording?roomId=${params.roomId}`)
+            : await fetch(`/api/startRecording?roomId=${params.roomId}`);
+
+          const data = await status.json();
+          console.log({ data });
+          setIsRecording(!isRecording);
+        }}
+      >
+        {isRecording ? "Stop Recording" : "Start Recording"}
+      </button>
       <Prompts />
     </section>
   );
