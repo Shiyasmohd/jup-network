@@ -25,28 +25,22 @@ export async function GET(req: NextApiRequest) {
 
   console.log("recording", recording);
 
-  const { msg } = recording;
+//   const { msg } = recording;
 
-  if (msg === "Stopped") {
-    const response = await fetch(
-      "https://api.huddle01.com/api/v1/get-recordings",
-      {
-        headers: {
-          "x-api-key": process.env.NEXT_PUBLIC_API_KEY as string,
-        },
-      }
-    );
-    const data = await response.json();
-
-    const { recordings } = data as { recordings: Recordings[] };
-
-    return NextResponse.json({ recording: recordings[0] });
-  }
+//   if (msg === "Stopped") {
+//     const response = await fetch(
+//       "https://api.huddle01.com/api/v1/get-recordings",
+//       {
+//         headers: {
+//           "x-api-key": process.env.NEXT_PUBLIC_API_KEY as string,
+//         },
+//       }
+//     );
+//     const data = await response.json();
+//     const { recordings } = data as { recordings: Recordings[] };
+//     console.log("recordings", recordings);
+//     return NextResponse.json({ recording: recordings[0] });
+//   }
 
   return NextResponse.json({ recording });
 }
-
-
-
-
- 

@@ -25,6 +25,12 @@ import { metadata } from "../layout";
 import { Recorder } from "@huddle01/server-sdk/recorder";
 import { AccessToken, Role } from "@huddle01/server-sdk/auth";
 
+interface Recordings {
+  id: string;
+  recordingUrl: string;
+  recordingSize: number;
+}
+
 const Home = ({ params }: { params: { roomId: string } }) => {
   const { state } = useRoom({
     onLeave: () => {
@@ -34,7 +40,7 @@ const Home = ({ params }: { params: { roomId: string } }) => {
   const { push } = useRouter();
   // const { changePeerRole } = useAcl();
   const [requestedPeerId, setRequestedPeerId] = useState("");
-    const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
 
   const { showAcceptRequest, setShowAcceptRequest } = useStore();
   const addChatMessage = useStore((state) => state.addChatMessage);
@@ -53,14 +59,11 @@ const Home = ({ params }: { params: { roomId: string } }) => {
 
   const { huddleClient } = useHuddle01();
 
-  
-
   useEffect(() => {
     if (state === "idle") {
       push(`/room/${params.roomId}/lobby`);
       return;
     } else {
-  
       console.log("length", peerIds.length);
       updateMetadata({
         displayName: userDisplayName,
@@ -119,6 +122,24 @@ const Home = ({ params }: { params: { roomId: string } }) => {
 
           const data = await status.json();
           console.log({ data });
+          const { msg } = data.recording;
+          console.log(msg);
+
+          //Only call this function after some time
+          if (msg === "Stopped") {
+            const response = await fetch(
+              "https://api.huddle01.com/api/v1/get-recordings",
+              {
+                headers: {
+                  "x-api-key": process.env.NEXT_PUBLIC_API_KEY as string,
+                },
+              }
+            );
+            const data = await response.json();
+            const { recordings } = data as { recordings: Recordings[] };
+
+            console.log("recording data ", recordings[0]);
+          }
           setIsRecording(!isRecording);
         }}
       >
