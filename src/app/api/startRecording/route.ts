@@ -8,8 +8,8 @@ const util = require("util");
 export async function GET(req: NextApiRequest) {
   //   const { roomId } = req.query;
   const { searchParams } = new URL(req.url as string);
-//   const roomId = searchParams.get("roomId");
-const roomId = "kjm-fxtx-xze";
+  const roomId = searchParams.get("roomId");
+
 
   const recorder = new Recorder(
     process.env.NEXT_PUBLIC_PROJECT_ID as string,
