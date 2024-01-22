@@ -9,3 +9,6 @@ While we're working towards creating fully anonymous and sovereign Network State
 Even though decisions are not made by state-appointed judges, since our model follows arbitral rules ( including NY Convention), decisions are recognised by the legal system.
 
 Although we're building JUSTICE PROTOCOL for NETWORK STATEs, its designed so that Nation State citizens can also access decentralised justice
+
+
+Project Demo - [Link](https://www.youtube.com/watch?v=Ak1uWumwIAg)
