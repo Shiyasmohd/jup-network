@@ -1,38 +1,11 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## JUSTICE SYSTEM FOR NETWORK STATE
 
-## Getting Started
+In Network States, individuals join via a social contract, agreeing on rules of conduct. But, misbehaviour results in disqualification. These instances of conflicts demands a justice system for fair resolution. Enter Justice Protocol, a solution to this challenge. Justice Protocol sets out rules for decentralised dispute resolution, seamlessly integrating into any Network State. Essentially, we've crafted the Justice Component, offering a transparent, efficient, and adaptable mechanism for conflict resolution which any Network States can plug-in. The rules of resolution on which justice is rendered may be decided by each Network State.
 
-First, run the development server:
+## DECENTRALISED JUSTICE FOR NATION STATE
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+While we're working towards creating fully anonymous and sovereign Network States, we recognize the immediate need for justice implementation in Nation States. In the interim, Justice Protocol offers a practical solution to address significant problems within Nation States. Foreg. India, is plagued by a centralised legal system, with bias & corruption in judge appointments. It has a backlog of 40 Million cases with only 17,000 judges, Justice Protocol creates an alternative to state based resolution, on-chain, by entrusting lawyers with role of judges. Adjudication to evidence storage & decision-making is handled on-chain, ensuring reliability in lawyer-based adjudication. This accelerates resolution AND establishes sustainable revenue for the 1.2 million lawyers in India ( who otherwise have monthly avg revenue of 0-15,000 INR). The flexibility of online resolution is particularly advantageous for women and specially-abled practitioners.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Even though decisions are not made by state-appointed judges, since our model follows arbitral rules ( including NY Convention), decisions are recognised by the legal system.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Although we're building JUSTICE PROTOCOL for NETWORK STATEs, its designed so that Nation State citizens can also access decentralised justice
